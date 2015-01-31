@@ -1,7 +1,7 @@
-require "ddp/server/version"
+require 'ddp/server/version'
 
-module Ddp
-  module Server
-    # Your code goes here...
-  end
+module DDP
+	# An implementation of the Meteor DDP protocol
+	module Server
+	end
 end

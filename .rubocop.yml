@@ -1,0 +1,6 @@
+Style/Tab:
+    Enabled: false
+Style/IndentationWidth:
+    Width: 1
+Metrics/LineLength:
+    Max: 120
