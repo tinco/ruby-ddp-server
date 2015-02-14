@@ -4,3 +4,5 @@ Style/IndentationWidth:
     Width: 1
 Metrics/LineLength:
     Max: 120
+Style/SignalException:
+    Enabled: false
