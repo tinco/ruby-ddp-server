@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
 	spec.version       = DDP::Server::VERSION
 	spec.authors       = ['Tinco Andringa']
 	spec.email         = ['mail@tinco.nl']
-	spec.description   = 'TODO: Write a gem description'
-	spec.summary       = 'TODO: Write a gem summary'
-	spec.homepage      = ''
+	spec.description   = 'DDP Protocol server for implementing Ruby DDP backends'
+	spec.summary       = 'DDP Protocol server for implementing Ruby DDP backends'
+	spec.homepage      = 'https://github.com/d-snp/ruby-ddp-server'
 	spec.license       = 'MIT'
 
 	spec.files         = `git ls-files`.split($RS)
