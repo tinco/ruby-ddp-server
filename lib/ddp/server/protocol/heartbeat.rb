@@ -6,7 +6,7 @@ module DDP
 				def handle_heartbeat
 					case @message['msg']
 					when 'ping'
-						write_message('msg' => 'pong', 'id' => @message['id'])
+						write_message msg: 'pong', id: @message['id']
 						true
 					when 'pong'
 						true
