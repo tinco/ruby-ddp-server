@@ -14,7 +14,7 @@ module DDP
 				end
 
 				def handle_method
-					raise 'Not Implemented'
+					raise 'Must be overridden'
 				end
 
 				def result(id, result = nil)

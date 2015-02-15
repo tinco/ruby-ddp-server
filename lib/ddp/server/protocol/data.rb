@@ -17,11 +17,11 @@ module DDP
 				end
 
 				def handle_sub
-					raise 'Not Implemented'
+					raise 'Must be overridden'
 				end
 
 				def handle_unsub
-					raise 'Not Implemented'
+					raise 'Must be overridden'
 				end
 
 				def nosub(id, error = nil)
