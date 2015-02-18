@@ -1,3 +1,3 @@
-require 'ddp/server/rack'
+require 'ddp/server'
 
-run DDP::Server::Rack
+run DDP::Server::WebSocket.rack
