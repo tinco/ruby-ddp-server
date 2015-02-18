@@ -15,7 +15,7 @@ module DDP
 					end
 				end
 
-				def handle_method(id, method, params)
+				def handle_method(_id, _method, _params)
 					raise 'Must be overridden'
 				end
 
@@ -27,7 +27,7 @@ module DDP
 
 				def send_error_result(id, error)
 					message = { msg: 'result', id: id }
-					message['error'] = { 
+					message['error'] = {
 						error: error.class.name,
 						reason: error.message,
 						details: "Backtrace: \n#{error.backtrace.join("\n")}"

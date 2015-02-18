@@ -16,11 +16,11 @@ module DDP
 					end
 				end
 
-				def handle_sub(id, name, params)
+				def handle_sub(_id, _name, _params)
 					raise 'Must be overridden'
 				end
 
-				def handle_unsub(id)
+				def handle_unsub(_id)
 					raise 'Must be overridden'
 				end
 
