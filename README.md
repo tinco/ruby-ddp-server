@@ -1,6 +1,6 @@
-# Ddp::Server
+# DDP::Server
 
-TODO: Write a gem description
+Ruby implementation of the DDP protocol for Meteor style servers.
 
 ## Installation
 
@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+For usage check out the `ddp-server-rethinkdb` gem which should be a good example of an implementation. This gem only covers the bare basics of the protocol.
 
 ## Contributing
 
