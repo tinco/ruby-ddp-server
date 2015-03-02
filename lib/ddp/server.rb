@@ -1,7 +1,7 @@
 require 'ddp/server/version'
 require 'ddp/server/protocol'
 require 'celluloid/websocket/rack'
-require 'json'
+require 'ddp/ejson'
 require 'securerandom'
 
 module DDP
@@ -15,11 +15,11 @@ module DDP
 			end
 
 			def read_message
-				JSON.parse read
+				EJSON.parse read
 			end
 
 			def write_message(message)
-				write JSON.generate(message)
+				write EJSON.generate(message)
 			end
 		end
 	end
