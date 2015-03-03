@@ -13,7 +13,7 @@ module DDP
 			JSON.generate as_ejson(object)
 		end
 
-		def as_ejson(object)
+		def self.as_ejson(object)
 			if object.respond_to? :as_ejson
 				object.as_ejson
 			elsif object.is_a? Hash
