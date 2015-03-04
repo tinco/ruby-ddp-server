@@ -58,7 +58,7 @@ module DDP
 
 		def self.deserialize_operation(hash)
 			if hash['$escape']
-				return deserialize(hash['$escape'])
+				return deserialize_escape(hash['$escape'])
 			elsif hash['$date']
 				return Time.at(hash['$date'] / 1000.0)
 			elsif hash['$binary']
@@ -69,27 +69,52 @@ module DDP
 			false
 		end
 
-		def self.deserialize_type(_hash)
-			raise 'Not implemented'
+		def self.deserialize_escape(hash)
+			hash.map do |k, v|
+				[k, deserialize(v)]
+			end.to_h
+		end
+
+		def self.deserialize_type(hash)
+			klass = @classes[hash['$type']]
+			if klass
+				klass.from_ejson(hash['$value'])
+			else
+				raise UnknownTypeError, "Don't know how to deserialize #{hash['$type']}"
+			end
 		end
 
 		def self.add_serializable_class(klass)
-			name = klass.name
-				.split('::')
-				.last
-				.gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-				.gsub(/([a-z\d])([A-Z])/, '\1_\2')
-				.tr('-', '_')
-				.downcase
 			@classes ||= {}
+			@classes[klass.name] = klass
+		end
+
+		def self.rename_serializable_class(klass, name)
+			@classes.delete(klass.name)
 			@classes[name] = klass
 		end
 
 		# Classes can include this module to be picked up by the EJSON parser
 		module Serializable
-			def self.included(klass)
+			def self.extended(klass)
 				EJSON.add_serializable_class(klass)
 			end
+
+			def ejson_type_name(name)
+				EJSON.rename_serializable_class(self, name)
+			end
+
+			def from_ejson(_object)
+				raise InvalidSerializableClassError, "Class #{name} must override from_ejson."
+			end
+		end
+
+		# Raised when parsing an unknown type
+		class UnknownTypeError < StandardError
+		end
+
+		# Raised when serializable class does not implement from_ejson
+		class InvalidSerializableClassError < StandardError
 		end
 	end
 end
