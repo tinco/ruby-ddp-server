@@ -41,6 +41,14 @@ module DDP
 					expect(EJSON.parse(json)).to eq(example)
 				end
 			end
+
+			it 'parses a date ejson' do
+				time = Time.now
+				ms_since_epoch = (time.to_f * 1000).to_i
+				example = { 'date' => { '$date' => ms_since_epoch } }
+				ejson = JSON.generate(example)
+				expect(EJSON.parse(ejson)['date'].to_s).to eq(time.to_s)
+			end
 		end
 	end
 end

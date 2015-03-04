@@ -6,3 +6,5 @@ Metrics/LineLength:
     Max: 120
 Style/SignalException:
     Enabled: false
+Style/MultilineOperationIndentation:
+    Enabled: false
