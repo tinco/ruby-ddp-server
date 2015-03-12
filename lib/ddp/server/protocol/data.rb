@@ -16,12 +16,32 @@ module DDP
 					end
 				end
 
-				def handle_sub(_id, _name, _params)
-					raise 'Must be overridden'
+				def handle_sub(id, name, params)
+					params ||= []
+					query = api.collection_query(name, *params)
+
+					subscriptions[id] = Subscription.new(self, id, name, query)
+
+					send_ready([id])
+				rescue => e
+					send_error_result(id, e)
 				end
 
-				def handle_unsub(_id)
-					raise 'Must be overridden'
+				def subscription_update(id, old_value, new_value)
+					subscription_name = @subscriptions[id].name
+					new_value_id = new_value['id']
+					old_value_id = old_value['id']
+
+					return send_added(subscription_name, new_value_id, new_value) if old_value.nil?
+					return send_removed(subscription_name, old_value_id) if new_value.nil?
+
+					send_changed(subscription.name, old_value_id, new_value, old_value.keys - new_value.keys)
+				end
+
+				def handle_unsub(id)
+					subscription = @subscriptions.delete(id)
+					subscription.stop unless subscription.nil?
+					send_nosub(id)
 				end
 
 				def send_nosub(id, error = nil)
@@ -59,6 +79,31 @@ module DDP
 
 				def send_moved_before(collection, id, before = nil)
 					write_message msg: 'movedBefore', id: id, collection: collection, before: before
+				end
+
+				# Actor that asynchronously monitors a collection
+				class Subscription
+					include Celluloid
+
+					attr_reader :name, :stopped
+					alias_method :stopped?, :stopped
+
+					def initialize(listener, id, name, query)
+						@stopped = false
+						@name = name
+						async.read_loop(listener, query, id)
+					end
+
+					def read_loop(listener, query, id)
+						query.run do |old_value, new_value|
+							listener.subscription_update(id, old_value, new_value)
+							break if stopped?
+						end
+					end
+
+					def stop
+						@stopped = true
+					end
 				end
 			end
 		end

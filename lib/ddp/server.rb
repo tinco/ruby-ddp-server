@@ -10,6 +10,13 @@ module DDP
 		class WebSocket < Celluloid::WebSocket
 			include DDP::Server::Protocol
 
+			attr_accessor :api, :subscriptions
+
+			def initialize(api_class, config)
+				@api = api_class.new(config)
+				@subscriptions = {}
+			end
+
 			def on_open
 				handle_connect
 			end

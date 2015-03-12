@@ -15,8 +15,12 @@ module DDP
 					end
 				end
 
-				def handle_method(_id, _method, _params)
-					raise 'Must be overridden'
+				def handle_method(id, method, params)
+					params ||= []
+					result = api.invoke_rpc(method, *params)
+					send_result(id, result)
+				rescue => e
+					send_error_result(id, e)
 				end
 
 				def send_result(id, result = NO_RESULT)
