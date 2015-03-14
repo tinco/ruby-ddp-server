@@ -12,8 +12,8 @@ module DDP
 
 			attr_accessor :api, :subscriptions
 
-			def initialize(api_class, config)
-				@api = api_class.new(config)
+			def initialize(api_class, *args)
+				@api = api_class.new(*args)
 				@subscriptions = {}
 			end
 

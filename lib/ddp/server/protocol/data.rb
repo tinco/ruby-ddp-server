@@ -1,3 +1,5 @@
+require 'celluloid'
+
 module DDP
 	module Server
 		module Protocol
@@ -19,9 +21,8 @@ module DDP
 				def handle_sub(id, name, params)
 					params ||= []
 					query = api.collection_query(name, *params)
-
-					subscriptions[id] = Subscription.new(self, id, name, query)
-
+					subscription = subscriptions[id] = Subscription.new(self, id, name, query)
+					subscription.async.start
 					send_ready([id])
 				rescue => e
 					send_error_result(id, e)
@@ -35,7 +36,7 @@ module DDP
 					return send_added(subscription_name, new_value_id, new_value) if old_value.nil?
 					return send_removed(subscription_name, old_value_id) if new_value.nil?
 
-					send_changed(subscription.name, old_value_id, new_value, old_value.keys - new_value.keys)
+					send_changed(subscription_name, old_value_id, new_value, old_value.keys - new_value.keys)
 				end
 
 				def handle_unsub(id)
@@ -85,17 +86,19 @@ module DDP
 				class Subscription
 					include Celluloid
 
-					attr_reader :name, :stopped
+					attr_reader :name, :stopped, :listener, :query, :id
 					alias_method :stopped?, :stopped
 
 					def initialize(listener, id, name, query)
 						@stopped = false
 						@name = name
-						async.read_loop(listener, query, id)
+						@listener = listener
+						@id = id
+						@query = query
 					end
 
-					def read_loop(listener, query, id)
-						query.run do |old_value, new_value|
+					def start
+						query.call do |old_value, new_value|
 							listener.subscription_update(id, old_value, new_value)
 							break if stopped?
 						end
