@@ -30,13 +30,11 @@ module DDP
 
 				def subscription_update(id, old_value, new_value)
 					subscription_name = @subscriptions[id].name
-					new_value_id = new_value['id']
-					old_value_id = old_value['id']
 
-					return send_added(subscription_name, new_value_id, new_value) if old_value.nil?
-					return send_removed(subscription_name, old_value_id) if new_value.nil?
+					return send_added(subscription_name, new_value['id'], new_value) if old_value.nil?
+					return send_removed(subscription_name, old_value['id']) if new_value.nil?
 
-					send_changed(subscription_name, old_value_id, new_value, old_value.keys - new_value.keys)
+					send_changed(subscription_name, old_value['id'], new_value, old_value.keys - new_value.keys)
 				end
 
 				def handle_unsub(id)
